@@ -1,0 +1,15 @@
+-------------------- <A: void baz()> (cg) --------------------
+[0@L18] invokestatic <B: void qux()>(); [<B: void qux()>]
+
+-------------------- <B: void qux()> (cg) --------------------
+[0@L24] invokestatic <A: void baz()>(); [<A: void baz()>]
+
+-------------------- <StaticCall: void main(java.lang.String[])> (cg) --------------------
+[0@L4] invokestatic <StaticCall: void foo()>(); [<StaticCall: void foo()>]
+[1@L5] invokestatic <A: void baz()>(); [<A: void baz()>]
+
+-------------------- <StaticCall: void foo()> (cg) --------------------
+[0@L9] invokestatic <StaticCall: void bar()>(); [<StaticCall: void bar()>]
+
+-------------------- <StaticCall: void bar()> (cg) --------------------
+
