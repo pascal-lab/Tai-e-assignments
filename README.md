@@ -8,4 +8,4 @@
 
 ### Getting Started
 
-If you want to do the assignments, please start with [Overview of Tai-e Assignments](https://tai-e.pascal-lab.net/intro/overview.html).
+If you want to do the assignments, please start with "*Overview of Tai-e Assignments*" [[中文](https://tai-e.pascal-lab.net/intro/overview.html)][[English](https://tai-e.pascal-lab.net/en/intro/overview.html)].
