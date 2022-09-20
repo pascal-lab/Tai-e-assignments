@@ -45,7 +45,7 @@ public abstract class Solver<Node, Fact> {
      * Static factory method to create a new solver for given analysis.
      */
     public static <Node, Fact> Solver<Node, Fact> makeSolver(
-            DataflowAnalysis<Node, Fact> analysis) {
+        DataflowAnalysis<Node, Fact> analysis) {
         return new WorkListSolver<>(analysis);
     }
 
@@ -77,7 +77,16 @@ public abstract class Solver<Node, Fact> {
     }
 
     protected void initializeForward(CFG<Node> cfg, DataflowResult<Node, Fact> result) {
-        // TODO - finish me
+        var entry = cfg.getEntry();
+        result.setInFact(entry, analysis.newBoundaryFact(cfg)); // make IN[entry] != null
+        result.setOutFact(entry, analysis.newBoundaryFact(cfg));
+        cfg.getNodes()
+            .stream()
+            .filter(it -> !cfg.isEntry(it))
+            .forEach(it -> {
+                result.setInFact(it, analysis.newInitialFact()); // make IN[B] != null
+                result.setOutFact(it, analysis.newInitialFact());
+            });
     }
 
     protected void initializeBackward(CFG<Node> cfg, DataflowResult<Node, Fact> result) {
