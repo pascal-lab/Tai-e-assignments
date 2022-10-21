@@ -152,6 +152,11 @@ public class ConstantPropagation extends AbstractDataflowAnalysis<Stmt, CPFact> 
             var op2 = in.get(binExp.getOperand2());
             var op = binExp.getOperator();
             if (op1.isNAC() || op2.isNAC()) {
+                // additional check for division by zero
+                if ((op == ArithmeticExp.Op.DIV || op == ArithmeticExp.Op.REM)
+                    && op2.isConstant() && op2.getConstant() == 0) {
+                    return Value.getUndef();
+                }
                 return Value.getNAC();
             }
             if (op1.isUndef() || op2.isUndef()) {
