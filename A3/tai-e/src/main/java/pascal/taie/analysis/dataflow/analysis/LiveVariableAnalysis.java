@@ -32,7 +32,7 @@ import pascal.taie.ir.stmt.Stmt;
  * Implementation of classic live variable analysis.
  */
 public class LiveVariableAnalysis extends
-        AbstractDataflowAnalysis<Stmt, SetFact<Var>> {
+    AbstractDataflowAnalysis<Stmt, SetFact<Var>> {
 
     public static final String ID = "livevar";
 
@@ -47,24 +47,47 @@ public class LiveVariableAnalysis extends
 
     @Override
     public SetFact<Var> newBoundaryFact(CFG<Stmt> cfg) {
-        // TODO - finish me
-        return null;
+        // IN[exit] <- {}
+        return new SetFact<>();
     }
 
     @Override
     public SetFact<Var> newInitialFact() {
-        // TODO - finish me
-        return null;
+        // IN[B] <- {} or OUT[B] <- {}
+        return new SetFact<>();
     }
 
     @Override
     public void meetInto(SetFact<Var> fact, SetFact<Var> target) {
-        // TODO - finish me
+        // OUT[B] = union(IN[s] for s in successor(B))
+        // it seems that this function should only union the two sets according to manual.
+        assert fact != null && target != null; // make sure two facts are not null
+        target.union(fact);
     }
 
     @Override
     public boolean transferNode(Stmt stmt, SetFact<Var> in, SetFact<Var> out) {
-        // TODO - finish me
-        return false;
+        assert in != null && out != null && stmt != null;
+        // IN[B] = union(OUT[B] - def(B), use(B))
+        var res = out.copy();
+        // res <- OUT[B] - def(B)
+        stmt.getDef().ifPresent(it -> {
+            // to pass compilation
+            if (it instanceof Var var) {
+                res.remove(var);
+            }
+        });
+        // res <- union(res, use(B))
+        stmt.getUses().forEach(it -> {
+            // to pass compilation
+            if (it instanceof Var var) {
+                res.add(var);
+            }
+        });
+        // transferred <- IN[B] != res
+        var transferred = !res.equals(in);
+        // IN[B] <- res
+        in.set(res);
+        return transferred;
     }
 }
