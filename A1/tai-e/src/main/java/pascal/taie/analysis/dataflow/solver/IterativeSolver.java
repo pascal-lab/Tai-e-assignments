@@ -40,5 +40,20 @@ class IterativeSolver<Node, Fact> extends Solver<Node, Fact> {
     @Override
     protected void doSolveBackward(CFG<Node> cfg, DataflowResult<Node, Fact> result) {
         // TODO - finish me
+
+        boolean changed = true;
+        while (changed) {
+            changed = false;
+            for (Node node : cfg) {
+                for (Node successor : cfg.getSuccsOf(node)) {
+                    analysis.meetInto(result.getInFact(successor), result.getOutFact(node)); //这行代码也是为什么要把node的in/out都实例的原因
+                }
+                // if any changed in iterations, we need to do the while-loop again.
+                boolean changedInIteration = analysis.transferNode(node, result.getInFact(node), result.getOutFact(node));
+                if (changedInIteration) {
+                    changed = true;
+                }
+            }
+        }
     }
 }

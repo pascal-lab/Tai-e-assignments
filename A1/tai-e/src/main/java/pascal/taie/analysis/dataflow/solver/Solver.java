@@ -82,6 +82,19 @@ public abstract class Solver<Node, Fact> {
 
     protected void initializeBackward(CFG<Node> cfg, DataflowResult<Node, Fact> result) {
         // TODO - finish me
+        for (Node node : cfg) {
+            // initial the exit and entry node, in order to escape the null pointer exception.
+            if (cfg.isExit(node)) {
+                result.setInFact(node, analysis.newBoundaryFact(cfg));
+                result.setOutFact(node, analysis.newBoundaryFact(cfg));
+            } else if (cfg.isEntry(node)) {
+                result.setOutFact(node, analysis.newBoundaryFact(cfg));
+                result.setInFact(node, analysis.newBoundaryFact(cfg));
+            } else {
+                result.setOutFact(node, analysis.newInitialFact());
+                result.setInFact(node, analysis.newInitialFact());
+            }
+        }
     }
 
     /**
