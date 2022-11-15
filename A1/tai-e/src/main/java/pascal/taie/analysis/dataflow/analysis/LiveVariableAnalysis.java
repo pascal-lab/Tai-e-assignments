@@ -25,14 +25,14 @@ package pascal.taie.analysis.dataflow.analysis;
 import pascal.taie.analysis.dataflow.fact.SetFact;
 import pascal.taie.analysis.graph.cfg.CFG;
 import pascal.taie.config.AnalysisConfig;
+import pascal.taie.ir.exp.RValue;
 import pascal.taie.ir.exp.Var;
 import pascal.taie.ir.stmt.Stmt;
 
 /**
  * Implementation of classic live variable analysis.
  */
-public class LiveVariableAnalysis extends
-        AbstractDataflowAnalysis<Stmt, SetFact<Var>> {
+public class LiveVariableAnalysis extends AbstractDataflowAnalysis<Stmt, SetFact<Var>> {
 
     public static final String ID = "livevar";
 
@@ -47,24 +47,37 @@ public class LiveVariableAnalysis extends
 
     @Override
     public SetFact<Var> newBoundaryFact(CFG<Stmt> cfg) {
-        // TODO - finish me
-        return null;
+        return newInitialFact();
     }
 
     @Override
     public SetFact<Var> newInitialFact() {
-        // TODO - finish me
-        return null;
+        return new SetFact<>();
     }
 
     @Override
     public void meetInto(SetFact<Var> fact, SetFact<Var> target) {
-        // TODO - finish me
+        target.union(fact);
     }
 
     @Override
     public boolean transferNode(Stmt stmt, SetFact<Var> in, SetFact<Var> out) {
-        // TODO - finish me
-        return false;
+        boolean isChanged;
+        // kill
+        SetFact<Var> outExcDef = out.copy();
+        stmt.getDef().ifPresent(def -> {
+            if (def instanceof Var) {
+                outExcDef.remove((Var) def);
+            }
+        });
+        // gen
+        for (RValue use : stmt.getUses()) {
+            if (use instanceof Var) {
+                outExcDef.add((Var) use);
+            }
+        }
+        isChanged = !outExcDef.equals(in);
+        in.set(outExcDef);
+        return isChanged;
     }
 }
