@@ -1,3 +1,5 @@
+- id: class-dumper
+  options: {}
 - id: cspta
   options:
     cs: ci
@@ -12,5 +14,3 @@
     algorithm: cspta
     action: dump
     file: null
-- id: class-dumper
-  options: {}

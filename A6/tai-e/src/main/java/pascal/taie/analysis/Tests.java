@@ -59,6 +59,10 @@ public final class Tests {
         String classPath = "src/test/resources/pta/" + dir;
         Collections.addAll(args, "-cp", classPath);
         Collections.addAll(args, "-m", main);
+        if (DUMP_IR) {
+            // dump IR
+            Collections.addAll(args, "-a", ClassDumper.ID);
+        }
         List<String> ptaArgs = new ArrayList<>();
         ptaArgs.add("implicit-entries:false");
         String action = GENERATE_EXPECTED_RESULTS ? "dump" : "compare";
@@ -77,10 +81,6 @@ public final class Tests {
             ptaArgs.add("only-app:true");
         }
         Collections.addAll(args, "-a", id + "=" + String.join(";", ptaArgs));
-        if (DUMP_IR) {
-            // dump IR
-            Collections.addAll(args, "-a", ClassDumper.ID);
-        }
         Main.main(args.toArray(new String[0]));
     }
 
